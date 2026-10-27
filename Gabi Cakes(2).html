@@ -1,0 +1,418 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Gabi Cakes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bagel+Fat+One&family=Figtree:wght@400;500;600;700&family=Caveat:wght@600&display=swap">
+<style>
+  /* Layout: vitrine de confeitaria. Cabeçalho fixo, abertura com copo, pote e torta em cluster, cardápio filtrável, passo a passo da encomenda e formulário que monta a mensagem de pedido. */
+  :root {
+    --bg: #FFF6F8;
+    --surface: #FFFFFF;
+    --blush: #FDE3EB;
+    --fg: #4A1D2E;
+    --muted: #84566A;
+    --line: #F4CFDB;
+    --pink: #F6A8C1;
+    --accent: #C2306A;
+    --on-accent: #FFFFFF;
+    --accent-soft: #FBD0DF;
+    --font-display: "Bagel Fat One", "Arial Rounded MT Bold", system-ui, sans-serif;
+    --font-body: "Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-hand: "Caveat", "Segoe Script", cursive;
+    /* ilustrações */
+    --i-cocoa: #6B3A2E;
+    --i-cream: #FFF3E6;
+    --i-pink: #F58DB0;
+    --i-rose: #E85D8F;
+    --i-red: #D7263D;
+    --i-lemon: #F7D96B;
+    --i-glass: rgba(255,255,255,.55);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #2A1018; --surface: #3A1823; --blush: #4A2030; --fg: #FFE9F0; --muted: #E4B3C4;
+      --line: #5E2B3F; --pink: #F59BB8; --accent: #F58DB0; --on-accent: #2A1018; --accent-soft: #5E2B3F;
+      --i-glass: rgba(255,255,255,.35);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #2A1018; --surface: #3A1823; --blush: #4A2030; --fg: #FFE9F0; --muted: #E4B3C4;
+    --line: #5E2B3F; --pink: #F59BB8; --accent: #F58DB0; --on-accent: #2A1018; --accent-soft: #5E2B3F;
+    --i-glass: rgba(255,255,255,.35);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg); color: var(--fg);
+    font-family: var(--font-body); font-size: 17px; line-height: 1.6;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 0;
+  }
+  body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+  .wrap { max-width: 1080px; margin: 0 auto; }
+  h1, h2, h3 { font-family: var(--font-display); font-weight: 400; line-height: 1.08; margin: 0; text-wrap: balance; letter-spacing: .005em; }
+  p { margin: 0; }
+  a { color: inherit; }
+  :focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+  .eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--accent); }
+
+  /* cabeçalho */
+  header.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--bg); border-bottom: 1px solid var(--line); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+  header.top .wrap { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-block: 12px; }
+  .logo { font-family: var(--font-display); font-size: 1.5rem; color: var(--accent); text-decoration: none; display: flex; align-items: center; gap: 8px; }
+  .logo svg { width: 28px; height: 28px; }
+  nav { display: flex; gap: 22px; align-items: center; }
+  nav a { text-decoration: none; font-weight: 600; font-size: .95rem; }
+  nav a:hover { color: var(--accent); }
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--accent); color: var(--on-accent); font: 700 1rem var(--font-body); padding: 13px 24px; border-radius: 999px; border: 0; text-decoration: none; cursor: pointer; transition: transform .15s ease; }
+  .btn:hover { transform: translateY(-2px); }
+  .btn.ghost { background: transparent; color: var(--fg); border: 2px solid var(--fg); }
+  @media (max-width: 640px) { nav a:not(.btn) { display: none; } }
+
+  /* abertura */
+  .hero { display: grid; grid-template-columns: 1.1fr 1fr; gap: 32px; align-items: center; padding-block: 56px 72px; }
+  .hero > * { min-width: 0; }
+  .hero h1 { font-size: clamp(2.7rem, 7.5vw, 5rem); margin-block: 14px 18px; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p.lead { font-size: 1.15rem; color: var(--muted); max-width: 46ch; }
+  .hero .cta { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 28px; }
+  .cluster { position: relative; aspect-ratio: 1 / 1; max-width: 460px; width: 100%; margin-inline: auto; background: var(--blush); border-radius: 50% 50% 46% 54% / 56% 48% 52% 44%; }
+  .cluster svg { position: absolute; filter: drop-shadow(0 10px 14px rgba(120,30,70,.18)); }
+  .cluster .a { width: 44%; left: 28%; top: 8%; transform: rotate(-3deg); }
+  .cluster .b { width: 40%; left: 4%; top: 42%; transform: rotate(-9deg); }
+  .cluster .c { width: 42%; right: 3%; top: 46%; transform: rotate(8deg); }
+  .sticker { position: absolute; right: 2%; top: 6%; background: var(--surface); color: var(--accent); font-family: var(--font-hand); font-size: 1.55rem; line-height: 1.05; text-align: center; padding: 14px 16px; border-radius: 50%; width: 104px; height: 104px; display: grid; place-items: center; transform: rotate(10deg); border: 2px dashed var(--accent); }
+  @media (max-width: 760px) { .hero { grid-template-columns: 1fr; padding-block: 36px 48px; } }
+
+  .scallop { height: 22px; background: radial-gradient(circle at 14px 0, var(--blush) 13px, transparent 14px) 0 0 / 28px 22px repeat-x; margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); }
+  .scallop.flip { transform: scaleY(-1); }
+
+  /* faixas */
+  .band { background: var(--blush); margin-inline: calc(-1 * max(16px, env(safe-area-inset-left, 0px))); padding-inline: max(16px, env(safe-area-inset-left, 0px)); }
+  section { padding-block: 72px; }
+  .head { display: grid; gap: 10px; margin-bottom: 32px; max-width: 60ch; }
+  .head h2 { font-size: clamp(2rem, 5vw, 3rem); }
+  .head p { color: var(--muted); }
+
+  /* cardápio */
+  .chips { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 28px; }
+  .chip { font: 600 .95rem var(--font-body); color: var(--fg); background: var(--surface); border: 2px solid var(--line); border-radius: 999px; padding: 8px 18px; cursor: pointer; }
+  .chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 22px; }
+  .card { background: var(--surface); border: 1px solid var(--line); border-radius: 22px; overflow: hidden; display: flex; flex-direction: column; min-width: 0; }
+  .card .art { background: var(--blush); aspect-ratio: 5 / 4; display: grid; place-items: center; }
+  .card .art svg { width: 56%; max-height: 86%; transition: transform .25s ease; }
+  .card:hover .art svg { transform: scale(1.06) rotate(-3deg); }
+  .card .body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 6px; flex: 1; }
+  .card .cat { font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--accent); }
+  .card h3 { font-size: 1.3rem; }
+  .card p { color: var(--muted); font-size: .95rem; flex: 1; }
+  .card .price { font-family: var(--font-hand); font-size: 1.7rem; color: var(--accent); margin-top: 6px; }
+  .note { margin-top: 22px; color: var(--muted); font-size: .9rem; }
+
+  /* como funciona */
+  .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 22px; list-style: none; padding: 0; margin: 0; counter-reset: s; }
+  .steps li { counter-increment: s; background: var(--surface); border-radius: 22px; padding: 24px 22px; display: grid; gap: 8px; min-width: 0; }
+  .steps li::before { content: counter(s); font-family: var(--font-display); font-size: 1.5rem; background: var(--accent); color: var(--on-accent); width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; }
+  .steps h3 { font-size: 1.2rem; }
+  .steps p { color: var(--muted); font-size: .95rem; }
+
+  /* sobre e ocasiões */
+  .about { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: start; }
+  .about > * { min-width: 0; }
+  .about p + p { margin-top: 14px; }
+  .occ { display: flex; flex-wrap: wrap; gap: 10px; list-style: none; padding: 0; margin: 0; }
+  .occ li { background: var(--blush); border-radius: 999px; padding: 9px 18px; font-weight: 600; }
+  .about h3 { font-size: 1.4rem; margin-bottom: 14px; }
+  @media (max-width: 760px) { .about { grid-template-columns: 1fr; gap: 32px; } }
+
+  /* pedido */
+  .order { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; align-items: start; }
+  .order > * { min-width: 0; }
+  form { display: grid; gap: 14px; background: var(--surface); padding: 26px; border-radius: 24px; border: 1px solid var(--line); }
+  .row { display: grid; grid-template-columns: 1fr 110px; gap: 12px; }
+  label { display: grid; gap: 6px; font-weight: 600; font-size: .9rem; min-width: 0; }
+  input, select, textarea { font: 500 1rem var(--font-body); color: var(--fg); background: var(--bg); border: 2px solid var(--line); border-radius: 14px; padding: 11px 14px; width: 100%; min-width: 0; }
+  textarea { resize: vertical; min-height: 84px; }
+  .msg-box { display: grid; gap: 14px; }
+  .msg-box h3 { font-size: 1.4rem; }
+  .msg-box output { display: block; white-space: pre-wrap; background: var(--surface); border: 2px dashed var(--accent); border-radius: 18px; padding: 18px 20px; min-height: 120px; overflow-wrap: anywhere; }
+  .contact { display: grid; gap: 4px; color: var(--muted); font-size: .95rem; }
+  .contact strong { color: var(--fg); }
+  .toast { color: var(--accent); font-weight: 700; min-height: 1.4em; }
+  @media (max-width: 760px) { .order { grid-template-columns: 1fr; } }
+
+  footer { text-align: center; padding-block: 40px 56px; color: var(--muted); font-size: .9rem; }
+  footer .logo { justify-content: center; margin-bottom: 8px; }
+
+  @media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="logo" href="#topo" aria-label="Gabi Cakes, início">
+      <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="9" r="4" fill="var(--i-red)"/><path d="M5 17h22l-2 11H7z" fill="var(--i-pink)"/><path d="M4 17c2 3 4 3 6 0 2 3 4 3 6 0 2 3 4 3 6 0 2 3 4 3 6 0v-2H4z" fill="var(--i-cream)"/></svg>
+      Gabi Cakes
+    </a>
+    <nav>
+      <a href="#cardapio">Cardápio</a>
+      <a href="#encomenda">Como pedir</a>
+      <a href="#sobre">Sobre</a>
+      <a class="btn" href="#pedido">Fazer pedido</a>
+    </nav>
+  </div>
+</header>
+
+<main id="topo">
+  <div class="wrap hero">
+    <div>
+      <p class="eyebrow">Doces feitos à mão</p>
+      <h1>Docinho que vira <em>festa</em> na mesa.</h1>
+      <p class="lead">Bolo no pote, tortas, copos da felicidade e doces para presentear. Feitos sob encomenda, com recheio de verdade e muito carinho.</p>
+      <div class="cta">
+        <a class="btn" href="#cardapio">Ver cardápio</a>
+        <a class="btn ghost" href="#pedido">Encomendar</a>
+      </div>
+    </div>
+    <div class="cluster" id="cluster" aria-hidden="true"></div>
+  </div>
+</main>
+
+<div class="scallop flip" aria-hidden="true"></div>
+<div class="band">
+  <section id="cardapio" class="wrap" style="padding-top:56px">
+    <div class="head">
+      <p class="eyebrow">Cardápio</p>
+      <h2>O que sai do forno da Gabi</h2>
+      <p>Escolha uma categoria e veja os sabores. Tudo é feito na semana do seu pedido.</p>
+    </div>
+    <div class="chips" id="chips" role="group" aria-label="Filtrar por categoria"></div>
+    <div class="grid" id="grid"></div>
+    <p class="note">Valores de exemplo. Sabores e preços finais combinados no pedido.</p>
+  </section>
+</div>
+<div class="scallop" aria-hidden="true"></div>
+
+<section id="encomenda" class="wrap">
+  <div class="head">
+    <p class="eyebrow">Como pedir</p>
+    <h2>Da escolha à entrega em quatro passos</h2>
+  </div>
+  <ol class="steps">
+    <li><h3>Escolha</h3><p>Veja o cardápio e separe os sabores e as quantidades que você quer.</p></li>
+    <li><h3>Mande o pedido</h3><p>Preencha o formulário abaixo e envie a mensagem pronta para a Gabi.</p></li>
+    <li><h3>Confirme a data</h3><p>A Gabi responde com o valor e reserva a data. Encomende com antecedência.</p></li>
+    <li><h3>Receba e aproveite</h3><p>Retire ou combine a entrega. Os doces chegam fresquinhos e bem embalados.</p></li>
+  </ol>
+</section>
+
+<div class="scallop flip" aria-hidden="true"></div>
+<div class="band">
+  <section id="sobre" class="wrap about" style="padding-top:56px">
+    <div>
+      <p class="eyebrow">Sobre a Gabi Cakes</p>
+      <h2 style="font-size:clamp(2rem,5vw,3rem);margin-block:10px 18px">Confeitaria pequena, capricho grande</h2>
+      <p>A Gabi Cakes nasceu da vontade de levar doce bom para a mesa das pessoas. Cada pote, torta e copo é montado na hora da encomenda, em camadas, sem pressa.</p>
+      <p>O resultado é doce com cara de presente: bonito de abrir e gostoso de repetir.</p>
+    </div>
+    <div>
+      <h3>Para qualquer ocasião</h3>
+      <ul class="occ">
+        <li>Aniversários</li><li>Chá de bebê</li><li>Lembrancinhas</li><li>Namorados</li><li>Festa em casa</li><li>Presente de empresa</li><li>Só porque sim</li>
+      </ul>
+    </div>
+  </section>
+</div>
+<div class="scallop" aria-hidden="true"></div>
+
+<section id="pedido" class="wrap">
+  <div class="head">
+    <p class="eyebrow">Fazer pedido</p>
+    <h2>Monte sua mensagem de encomenda</h2>
+    <p>Preencha os campos. O texto ao lado se atualiza sozinho. Depois é só copiar e enviar para a Gabi.</p>
+  </div>
+  <div class="order">
+    <form id="orderForm" autocomplete="off">
+      <label for="f-nome">Seu nome
+        <input id="f-nome" type="text" placeholder="Maria">
+      </label>
+      <div class="row">
+        <label for="f-item">Produto
+          <select id="f-item"></select>
+        </label>
+        <label for="f-qtd">Qtd.
+          <input id="f-qtd" type="number" min="1" max="500" value="6">
+        </label>
+      </div>
+      <label for="f-data">Data da entrega
+        <input id="f-data" type="date">
+      </label>
+      <label for="f-obs">Observações
+        <textarea id="f-obs" placeholder="Sabor preferido, embalagem para presente, alergias..."></textarea>
+      </label>
+    </form>
+    <div class="msg-box">
+      <h3>Sua mensagem</h3>
+      <output id="msg" for="f-nome f-item f-qtd f-data f-obs"></output>
+      <button class="btn" type="button" id="copy">Copiar mensagem</button>
+      <p class="toast" id="toast" role="status"></p>
+      <div class="contact">
+        <span><strong>WhatsApp:</strong> (00) 00000-0000</span>
+        <span><strong>Instagram:</strong> <a href="https://www.instagram.com/gabicakes_festa/">@gabicakes_festa</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <a class="logo" href="#topo">Gabi Cakes</a>
+  <p>Feito com açúcar, afeto e muita granulado.</p>
+</footer>
+
+<script>
+(function () {
+  var cats = [
+    { id: "todos", nome: "Tudo" },
+    { id: "pote", nome: "Bolo no pote" },
+    { id: "torta", nome: "Tortas" },
+    { id: "copo", nome: "Copos da felicidade" },
+    { id: "doce", nome: "Doces" },
+    { id: "outro", nome: "Para presentear" }
+  ];
+  var catNome = { pote: "Bolo no pote", torta: "Torta", copo: "Copo da felicidade", doce: "Doces", outro: "Para presentear" };
+
+  var itens = [
+    { c: "pote", n: "Ninho com morango", d: "Massa branca fofinha, creme de leite ninho e morangos frescos.", p: "R$ 12" },
+    { c: "pote", n: "Brigadeiro cremoso", d: "Bolo de chocolate, brigadeiro de panela e granulado.", p: "R$ 12" },
+    { c: "pote", n: "Red velvet", d: "Massa vermelha com creme de cream cheese e raspas de chocolate.", p: "R$ 14" },
+    { c: "torta", n: "Torta de limão", d: "Base crocante, creme de limão e cobertura de merengue maçaricado.", p: "R$ 85 inteira" },
+    { c: "torta", n: "Torta de morango", d: "Creme de baunilha, morangos selecionados e geleia brilhante.", p: "R$ 95 inteira" },
+    { c: "torta", n: "Torta de chocolate", d: "Ganache de chocolate meio amargo sobre massa amanteigada.", p: "R$ 90 inteira" },
+    { c: "copo", n: "Ninho com creme de avelã", d: "Camadas de brigadeiro branco, creme de avelã e flocos crocantes.", p: "R$ 16" },
+    { c: "copo", n: "Morango com ninho", d: "Creme de ninho, morangos fatiados e calda de morango.", p: "R$ 16" },
+    { c: "copo", n: "Chocolate com biscoito", d: "Brigadeiro, creme de baunilha e pedaços de biscoito de chocolate.", p: "R$ 15" },
+    { c: "doce", n: "Brigadeiros gourmet", d: "Caixa com 12 unidades em sabores variados.", p: "R$ 42 a caixa" },
+    { c: "doce", n: "Beijinho de coco", d: "Cremoso por dentro, coco ralado por fora. Caixa com 12.", p: "R$ 38 a caixa" },
+    { c: "outro", n: "Cookies recheados", d: "Crocantes por fora e macios por dentro. Pacote com 4.", p: "R$ 28 o pacote" },
+    { c: "outro", n: "Caixinha de presente", d: "Seleção de doces em caixa decorada, com laço e cartão.", p: "R$ 55 a caixa" }
+  ];
+
+  /* ilustrações em SVG */
+  function art(tipo, k) {
+    var s = '<svg viewBox="0 0 120 120" aria-hidden="true" focusable="false">';
+    if (tipo === "pote") {
+      s += '<defs><clipPath id="cp' + k + '"><rect x="30" y="38" width="60" height="68" rx="12"/></clipPath></defs>' +
+        '<g clip-path="url(#cp' + k + ')"><rect x="30" y="38" width="60" height="68" fill="var(--i-glass)"/>' +
+        '<rect x="30" y="50" width="60" height="16" fill="var(--i-cocoa)"/><rect x="30" y="66" width="60" height="14" fill="var(--i-cream)"/>' +
+        '<rect x="30" y="80" width="60" height="14" fill="var(--i-pink)"/><rect x="30" y="94" width="60" height="14" fill="var(--i-cocoa)"/></g>' +
+        '<rect x="30" y="38" width="60" height="68" rx="12" fill="none" stroke="var(--i-cocoa)" stroke-width="3"/>' +
+        '<rect x="26" y="28" width="68" height="13" rx="6" fill="var(--i-rose)"/>' +
+        '<circle cx="60" cy="24" r="7" fill="var(--i-red)"/><path d="M60 17c1-5 5-6 7-6" stroke="var(--i-cocoa)" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+    } else if (tipo === "torta") {
+      s += '<path d="M14 74h92l-9 28H23z" fill="var(--i-lemon)" stroke="var(--i-cocoa)" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M16 72c0-24 14-38 44-38s44 14 44 38z" fill="var(--i-pink)" stroke="var(--i-cocoa)" stroke-width="3"/>' +
+        '<path d="M22 66c6 6 10 6 16 0 6 6 10 6 16 0 6 6 10 6 16 0 6 6 10 6 16 0" stroke="var(--i-cream)" stroke-width="6" fill="none" stroke-linecap="round"/>' +
+        '<circle cx="46" cy="46" r="7" fill="var(--i-red)"/><circle cx="68" cy="42" r="7" fill="var(--i-red)"/><circle cx="82" cy="54" r="6" fill="var(--i-red)"/>' +
+        '<path d="M44 40l2-5M66 36l2-5" stroke="var(--i-cocoa)" stroke-width="2.5" stroke-linecap="round"/>';
+    } else if (tipo === "copo") {
+      s += '<defs><clipPath id="cp' + k + '"><path d="M34 42h52l-6 62a6 6 0 0 1-6 5H46a6 6 0 0 1-6-5z"/></clipPath></defs>' +
+        '<g clip-path="url(#cp' + k + ')"><rect x="30" y="42" width="60" height="70" fill="var(--i-glass)"/>' +
+        '<rect x="30" y="54" width="60" height="14" fill="var(--i-cream)"/><rect x="30" y="68" width="60" height="14" fill="var(--i-cocoa)"/>' +
+        '<rect x="30" y="82" width="60" height="12" fill="var(--i-pink)"/><rect x="30" y="94" width="60" height="16" fill="var(--i-cocoa)"/></g>' +
+        '<path d="M34 42h52l-6 62a6 6 0 0 1-6 5H46a6 6 0 0 1-6-5z" fill="none" stroke="var(--i-cocoa)" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M32 44c2-14 12-16 28-16s26 2 28 16c-6 4-12-2-18 2s-12-2-20 0-12 2-18-2z" fill="var(--i-cream)" stroke="var(--i-cocoa)" stroke-width="3" stroke-linejoin="round"/>' +
+        '<circle cx="60" cy="22" r="8" fill="var(--i-red)"/><path d="M60 14c1-5 6-7 9-6" stroke="var(--i-cocoa)" stroke-width="2.5" fill="none" stroke-linecap="round"/>';
+    } else if (tipo === "doce") {
+      s += '<path d="M24 66h72l-8 36H32z" fill="var(--i-rose)" stroke="var(--i-cocoa)" stroke-width="3" stroke-linejoin="round"/>' +
+        '<path d="M34 66v34M46 66v36M58 66v36M70 66v36M82 66v34" stroke="var(--i-cream)" stroke-width="2" opacity=".7"/>' +
+        '<circle cx="60" cy="52" r="30" fill="var(--i-cocoa)"/>' +
+        '<g stroke-width="4" stroke-linecap="round"><path d="M44 42l5-3" stroke="var(--i-pink)"/><path d="M62 32l5 2" stroke="var(--i-lemon)"/><path d="M76 46l4-3" stroke="var(--i-cream)"/><path d="M50 56l5 2" stroke="var(--i-lemon)"/><path d="M68 58l4-3" stroke="var(--i-pink)"/><path d="M58 46l-1 5" stroke="var(--i-cream)"/><path d="M42 58l-1 5" stroke="var(--i-cream)"/><path d="M82 58l1 4" stroke="var(--i-lemon)"/></g>';
+    } else {
+      s += '<rect x="22" y="52" width="76" height="52" rx="8" fill="var(--i-rose)" stroke="var(--i-cocoa)" stroke-width="3"/>' +
+        '<rect x="18" y="38" width="84" height="20" rx="7" fill="var(--i-pink)" stroke="var(--i-cocoa)" stroke-width="3"/>' +
+        '<path d="M60 38v66" stroke="var(--i-cream)" stroke-width="8"/>' +
+        '<path d="M60 38c-8-18-26-14-20-4 4 6 14 4 20 4zm0 0c8-18 26-14 20-4-4 6-14 4-20 4z" fill="var(--i-cream)" stroke="var(--i-cocoa)" stroke-width="3" stroke-linejoin="round"/>';
+    }
+    return s + "</svg>";
+  }
+  var tipoArt = { pote: "pote", torta: "torta", copo: "copo", doce: "doce", outro: "outro" };
+
+  /* abertura */
+  var cl = document.getElementById("cluster");
+  cl.innerHTML =
+    '<span class="a">' + art("copo", "h1") + "</span>" +
+    '<span class="b">' + art("pote", "h2") + "</span>" +
+    '<span class="c">' + art("torta", "h3") + "</span>" +
+    '<span class="sticker">feito<br>com amor</span>';
+  Array.prototype.forEach.call(cl.querySelectorAll("span.a, span.b, span.c"), function (el) {
+    var svg = el.firstChild; svg.setAttribute("class", el.className); el.replaceWith(svg);
+  });
+
+  /* cardápio */
+  var chips = document.getElementById("chips");
+  var grid = document.getElementById("grid");
+  var atual = "todos";
+
+  function pintaChips() {
+    chips.innerHTML = "";
+    cats.forEach(function (c) {
+      var b = document.createElement("button");
+      b.type = "button"; b.className = "chip"; b.textContent = c.nome;
+      b.setAttribute("aria-pressed", String(c.id === atual));
+      b.addEventListener("click", function () { atual = c.id; pintaChips(); pintaGrid(); });
+      chips.appendChild(b);
+    });
+  }
+  function pintaGrid() {
+    var html = "";
+    itens.forEach(function (it, i) {
+      if (atual !== "todos" && it.c !== atual) return;
+      html += '<article class="card"><div class="art">' + art(tipoArt[it.c], "c" + i) + '</div>' +
+        '<div class="body"><span class="cat">' + catNome[it.c] + '</span><h3>' + it.n + '</h3><p>' + it.d + '</p><span class="price">' + it.p + '</span></div></article>';
+    });
+    grid.innerHTML = html;
+  }
+  pintaChips(); pintaGrid();
+
+  /* pedido */
+  var sel = document.getElementById("f-item");
+  itens.forEach(function (it) {
+    var o = document.createElement("option"); o.value = it.n; o.textContent = it.n + " (" + catNome[it.c].toLowerCase() + ")"; sel.appendChild(o);
+  });
+  var nome = document.getElementById("f-nome"), qtd = document.getElementById("f-qtd"),
+      data = document.getElementById("f-data"), obs = document.getElementById("f-obs"),
+      msg = document.getElementById("msg"), toast = document.getElementById("toast");
+
+  function fmt(d) { var p = d.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; }
+  function monta() {
+    var t = "Oi, Gabi! " + (nome.value.trim() ? "Aqui é " + nome.value.trim() + ". " : "") +
+      "Quero encomendar " + (qtd.value || 1) + " x " + sel.value;
+    if (data.value) t += " para o dia " + fmt(data.value);
+    t += ".";
+    if (obs.value.trim()) t += "\nObservações: " + obs.value.trim();
+    t += "\nPode me passar o valor e confirmar a data?";
+    msg.textContent = t;
+  }
+  [nome, qtd, sel, data, obs].forEach(function (el) { el.addEventListener("input", monta); el.addEventListener("change", monta); });
+  monta();
+
+  document.getElementById("copy").addEventListener("click", function () {
+    function ok() { toast.textContent = "Mensagem copiada. Agora é só colar na conversa."; }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(msg);
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r);
+      toast.textContent = "Texto selecionado. Use Copiar no seu aparelho.";
+    }
+    try {
+      navigator.clipboard.writeText(msg.textContent).then(ok, fallback);
+    } catch (e) { fallback(); }
+  });
+})();
+</script>
+
+</body></html>
